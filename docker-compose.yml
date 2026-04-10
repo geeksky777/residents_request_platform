@@ -1,0 +1,125 @@
+services:
+
+  # ── Databases ───────────────────────────────────────────────────────────────
+
+  request-db:
+    image: postgres:16-alpine
+    container_name: request-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: request_db
+      POSTGRES_USER: request_user
+      POSTGRES_PASSWORD: request_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - request-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U request_user -d request_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  management-db:
+    image: postgres:16-alpine
+    container_name: management-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: management_db
+      POSTGRES_USER: management_user
+      POSTGRES_PASSWORD: management_pass
+    ports:
+      - "5433:5432"
+    volumes:
+      - management-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U management_user -d management_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # ── Kafka (KRaft, no Zookeeper) ─────────────────────────────────────────────
+
+  kafka:
+    image: bitnami/kafka:3.7
+    container_name: kafka
+    restart: unless-stopped
+    environment:
+      # KRaft — combined broker + controller on a single node
+      KAFKA_CFG_NODE_ID: 0
+      KAFKA_CFG_PROCESS_ROLES: controller,broker
+      KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: 0@kafka:9093
+
+      # Two listeners:
+      #   INTERNAL — used by other containers inside the docker network
+      #   EXTERNAL — used by tools on the host machine (kafka-ui, etc.)
+      KAFKA_CFG_LISTENERS: INTERNAL://:9092,CONTROLLER://:9093,EXTERNAL://:9094
+      KAFKA_CFG_ADVERTISED_LISTENERS: INTERNAL://kafka:9092,EXTERNAL://localhost:9094
+      KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_CFG_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_CFG_CONTROLLER_LISTENER_NAMES: CONTROLLER
+
+      KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE: "true"
+      ALLOW_PLAINTEXT_LISTENER: "yes"
+    ports:
+      - "9094:9094"   # expose EXTERNAL listener to host
+    volumes:
+      - kafka-data:/bitnami/kafka
+    healthcheck:
+      test: ["CMD-SHELL", "kafka-topics.sh --bootstrap-server localhost:9092 --list"]
+      interval: 10s
+      timeout: 10s
+      retries: 15
+      start_period: 20s
+
+  # ── Kafka UI ─────────────────────────────────────────────────────────────────
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-ui
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+    depends_on:
+      kafka:
+        condition: service_healthy
+
+  # ── Application Services ─────────────────────────────────────────────────────
+
+  request-service:
+    build: ./request-service
+    container_name: request-service
+    restart: unless-stopped
+    ports:
+      - "8001:8000"
+    environment:
+      DATABASE_URL: postgresql+asyncpg://request_user:request_pass@request-db:5432/request_db
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+    depends_on:
+      request-db:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+
+  management-service:
+    build: ./management-service
+    container_name: management-service
+    restart: unless-stopped
+    ports:
+      - "8002:8000"
+    environment:
+      DATABASE_URL: postgresql+asyncpg://management_user:management_pass@management-db:5432/management_db
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+    depends_on:
+      management-db:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+
+volumes:
+  request-db-data:
+  management-db-data:
+  kafka-data:
