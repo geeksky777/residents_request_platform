@@ -1,5 +1,7 @@
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
+from app.routers import requests
+
 
 
 # @asynccontextmanager
@@ -12,6 +14,8 @@ from contextlib import asynccontextmanager
 # app = FastAPI(lifespan=lifespan)
 
 app = FastAPI()
+
+app.include_router(requests.router)
 
 @app.get("/")
 async def health_check():
