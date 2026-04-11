@@ -159,6 +159,8 @@ resident-request-platform/
 │       ├── models.py          # SQLAlchemy models
 │       ├── schemas.py         # Pydantic schemas
 │       ├── database.py        # engine, session
+│       ├── repo.py            # data access layer (CRUD against DB)
+│       ├── service.py         # business logic layer
 │       ├── routers/
 │       │   └── requests.py
 │       ├── kafka/
@@ -170,9 +172,11 @@ resident-request-platform/
 │   ├── requirements.txt
 │   └── app/
 │       ├── main.py
-│       ├── models.py
-│       ├── schemas.py
-│       ├── database.py
+│       ├── models.py          # SQLAlchemy models
+│       ├── schemas.py         # Pydantic schemas
+│       ├── database.py        # engine, session
+│       ├── repo.py            # data access layer (CRUD against DB)
+│       ├── service.py         # business logic layer
 │       ├── routers/
 │       │   └── requests.py
 │       ├── kafka/
