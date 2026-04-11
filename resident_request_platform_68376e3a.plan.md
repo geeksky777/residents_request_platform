@@ -241,6 +241,6 @@ alembic
 asyncpg
 pydantic
 aiokafka          # async Kafka client for Python
-python-dotenv
+pydantic-settings
 ```
 
