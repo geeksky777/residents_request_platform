@@ -5,4 +5,4 @@ alembic
 asyncpg
 pydantic
 aiokafka
-python-dotenv
+pydantic-settings
