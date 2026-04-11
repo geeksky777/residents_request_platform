@@ -154,35 +154,45 @@ resident-request-platform/
 ├── request-service/
 │   ├── Dockerfile
 │   ├── requirements.txt
+│   ├── alembic.ini
+│   ├── alembic/
+│   │   ├── env.py
+│   │   ├── script.py.mako
+│   │   └── versions/
 │   └── app/
 │       ├── main.py
 │       ├── models.py          # SQLAlchemy models
 │       ├── schemas.py         # Pydantic schemas
 │       ├── database.py        # engine, session
+│       ├── config.py          # pydantic-settings config
 │       ├── repo.py            # data access layer (CRUD against DB)
 │       ├── service.py         # business logic layer
 │       ├── routers/
 │       │   └── requests.py
-│       ├── kafka/
-│       │   ├── producer.py    # publish request.created
-│       │   └── consumer.py    # consume request.updated (background task)
-│       └── alembic/
+│       └── kafka/
+│           ├── producer.py    # publish request.created
+│           └── consumer.py    # consume request.updated (background task)
 ├── management-service/
 │   ├── Dockerfile
 │   ├── requirements.txt
+│   ├── alembic.ini
+│   ├── alembic/
+│   │   ├── env.py
+│   │   ├── script.py.mako
+│   │   └── versions/
 │   └── app/
 │       ├── main.py
 │       ├── models.py          # SQLAlchemy models
 │       ├── schemas.py         # Pydantic schemas
 │       ├── database.py        # engine, session
+│       ├── config.py          # pydantic-settings config
 │       ├── repo.py            # data access layer (CRUD against DB)
 │       ├── service.py         # business logic layer
 │       ├── routers/
 │       │   └── requests.py
-│       ├── kafka/
-│       │   ├── producer.py    # publish request.updated
-│       │   └── consumer.py    # consume request.created (background task)
-│       └── alembic/
+│       └── kafka/
+│           ├── producer.py    # publish request.updated
+│           └── consumer.py    # consume request.created (background task)
 ```
 
 ---

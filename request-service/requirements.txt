@@ -1,8 +1,8 @@
-fastapi
-uvicorn[standard]
-sqlalchemy[asyncio]
-alembic
-asyncpg
-pydantic
-aiokafka
-pydantic-settings
+fastapi>=0.135.3
+uvicorn[standard]>=0.44.0
+sqlalchemy[asyncio]>=2.0.49
+alembic>=1.18.4
+asyncpg>=0.31.0
+pydantic>=2.12.5
+aiokafka>=0.13.0
+pydantic-settings>=2.13.1
