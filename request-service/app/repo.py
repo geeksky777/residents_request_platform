@@ -13,7 +13,7 @@ async def create_request(request: RequestCreate, db: AsyncSession) -> Request:
     )
     db.add(new_request)
     await db.commit()
-    db.refresh(new_request)
+    await db.refresh(new_request)
     return new_request
 
 
