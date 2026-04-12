@@ -28,6 +28,6 @@ async def get_requests_by_resident_id(resident_id: int, db: AsyncSession = Depen
     return await get_requests_by_resident_id_service(resident_id, db)
 
 
-@router.get("/{id}", response_model=RequestResponse)
-async def get_request_by_id(id: UUID, db: AsyncSession = Depends(get_db)):
-    return await get_request_by_id_service(id, db)
+@router.get("/{request_id}", response_model=RequestResponse)
+async def get_request_by_id(request_id: UUID, db: AsyncSession = Depends(get_db)):
+    return await get_request_by_id_service(request_id, db)

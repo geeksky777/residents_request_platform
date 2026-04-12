@@ -29,6 +29,6 @@ async def get_requests_by_resident_id(resident_id: int, db: AsyncSession) -> lis
 
 
 
-async def get_request_by_id(id: UUID, db: AsyncSession) -> Request:
-    request = await db.execute(select(Request).where(Request.id == id))
+async def get_request_by_id(request_id: UUID, db: AsyncSession) -> Request:
+    request = await db.execute(select(Request).where(Request.id == request_id))
     return request.scalar_one_or_none()

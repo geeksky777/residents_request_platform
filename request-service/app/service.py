@@ -9,8 +9,6 @@ from app.repo import get_requests_by_resident_id
 
 async def create_request_service(request: RequestCreate, db: AsyncSession) -> Request:
     new_request = await create_request(request, db)
-    if not new_request:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Failed to create request")
     # await publish_to_kafka(new_request)
     await db.commit()
     return new_request
@@ -30,8 +28,8 @@ async def get_requests_by_resident_id_service(resident_id: int, db: AsyncSession
     return requests
 
 
-async def get_request_by_id_service(id: UUID, db: AsyncSession) -> Request:
-    request = await get_request_by_id(id, db)
+async def get_request_by_id_service(request_id: UUID, db: AsyncSession) -> Request:
+    request = await get_request_by_id(request_id, db)
     if not request:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No request found")
     return request
