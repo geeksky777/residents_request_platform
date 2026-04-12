@@ -3,6 +3,7 @@ import json
 import asyncio
 from app.config import settings
 from app.database import async_session_factory
+from app.logger import logger
 
 
 _consumer: AIOKafkaConsumer | None = None
@@ -23,12 +24,20 @@ async def start_consumer():
 async def stop_consumer():
     if _consumer_task:
         _consumer_task.cancel()
+    try:
+        await _consumer_task
+    except asyncio.CancelledError:
+        pass
     if _consumer:
         await _consumer.stop()
 
 async def _consume_loop():
     from app.service import handle_new_request
     async for message in _consumer:
-        async with async_session_factory() as session:
-            await handle_new_request(message.value, session)
-            await session.commit()
+        try:
+            async with async_session_factory() as session:
+                await handle_new_request(message.value, session)
+                await session.commit()
+        except Exception as e:
+            logger.error(f"Error in consume loop: {e}")
+            raise e

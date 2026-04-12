@@ -6,5 +6,5 @@ from pydantic import Field
 
 class RequestUpdate(BaseModel):
     status: StatusEnum
-    assigned_worker: int | None
-    comments: str | None
+    assigned_worker: int | None = None
+    comments: str | None = None

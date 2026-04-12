@@ -1,3 +1,4 @@
+from datetime import datetime
 from uuid import UUID
 
 from fastapi import HTTPException
@@ -36,6 +37,7 @@ async def create_request(data: dict, db: AsyncSession) -> Request:
         title=data["title"],
         description=data["description"],
         status=StatusEnum(data["status"]),
+        created_at=datetime.fromisoformat(data["created_at"]),
     )
     db.add(request)
     await db.flush()

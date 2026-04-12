@@ -25,7 +25,9 @@ async def stop_producer():
 
 
 async def publish_request(request: Request) -> None:
-    await _producer.send(
+    if _producer is None:
+        raise RuntimeError("Producer is not started")
+    await _producer.send_and_wait(
        topic="requests.created",
        key=request.building_id,
        value={

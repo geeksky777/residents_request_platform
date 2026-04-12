@@ -18,6 +18,4 @@ async def update_request_service(request_id: UUID, request_to_update: RequestUpd
     return request
 
 async def handle_new_request(data: dict, db: AsyncSession) -> None:
-    new_request = await create_request(data, db)
-    await db.commit()
-    return new_request
+    await create_request(data, db)
