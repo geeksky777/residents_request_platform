@@ -22,7 +22,7 @@ class Request(Base):
         Enum(StatusEnum, name="status_enum"),
         nullable=False,
         default=StatusEnum.PENDING,
-        server_default=StatusEnum.PENDING.value,
+        server_default="'PENDING'",
     )
     assigned_worker: Mapped[int] = mapped_column(Integer, nullable=True)
     created_at: Mapped[datetime] = mapped_column(

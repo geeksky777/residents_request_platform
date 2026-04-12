@@ -21,7 +21,7 @@ class Request(Base):
         Enum(StatusEnum, name="status_enum"),
         nullable=False,
         default=StatusEnum.PENDING,
-        server_default=StatusEnum.PENDING.value,
+        server_default="'PENDING'",
     )
     assigned_worker: Mapped[int] = mapped_column(Integer, nullable=True)
     comments: Mapped[str] = mapped_column(Text, nullable=True)
