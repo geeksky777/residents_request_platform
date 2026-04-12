@@ -1,7 +1,8 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.schemas import RequestCreate
 from app.models import Request
-from sqlalchemy import UUID, select
+from sqlalchemy import select
+from uuid import UUID
 
 
 async def create_request(request: RequestCreate, db: AsyncSession) -> Request:
