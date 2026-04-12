@@ -1,9 +1,11 @@
 from aiokafka import AIOKafkaConsumer
 import json
 import asyncio
+
+
 from app.config import settings
 from app.database import async_session_factory
-from app.logger import logger
+
 
 
 _consumer: AIOKafkaConsumer | None = None
@@ -24,10 +26,10 @@ async def start_consumer():
 async def stop_consumer():
     if _consumer_task:
         _consumer_task.cancel()
-    try:
-        await _consumer_task
-    except asyncio.CancelledError:
-        pass
+        try:
+            await _consumer_task
+        except asyncio.CancelledError:
+            pass
     if _consumer:
         await _consumer.stop()
 
@@ -39,5 +41,4 @@ async def _consume_loop():
                 await handle_new_request(message.value, session)
                 await session.commit()
         except Exception as e:
-            logger.error(f"Error in consume loop: {e}")
-            raise e
+            print(f"Error in consume loop: {e}")
