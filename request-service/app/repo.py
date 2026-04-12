@@ -12,14 +12,14 @@ async def create_request(request: RequestCreate, db: AsyncSession) -> Request:
         building_id=request.building_id,
     )
     db.add(new_request)
-    await db.commit()
+    await db.flush()
     await db.refresh(new_request)
     return new_request
 
 
-async def get_all_requests(db: AsyncSession) -> list[Request]:
-    requests = await db.execute(select(Request))
-    return requests.scalars().all()
+# async def get_all_requests(db: AsyncSession) -> list[Request]:
+#     requests = await db.execute(select(Request))
+#     return requests.scalars().all()
 
 
 async def get_requests_by_resident_id(resident_id: int, db: AsyncSession) -> list[Request]:
