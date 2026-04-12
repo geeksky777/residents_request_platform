@@ -18,8 +18,6 @@ async def create_request_service(request: RequestCreate, db: AsyncSession) -> Re
 
 async def get_all_requests_service(db: AsyncSession) -> list[Request]:
     requests = await get_all_requests(db)
-    if not requests:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No requests found")
     return requests
 
 
