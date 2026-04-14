@@ -1,5 +1,5 @@
 from uuid import uuid4
-from sqlalchemy import UUID, DateTime, Integer, String, Text, Enum, func
+from sqlalchemy import UUID, DateTime, Integer, String, Text, Enum, func, text
 from sqlalchemy.orm import Mapped, mapped_column
 from app.database import Base
 from app.database import StatusEnum
@@ -21,7 +21,7 @@ class Request(Base):
         Enum(StatusEnum, name="status_enum"),
         nullable=False,
         default=StatusEnum.PENDING,
-        server_default="'PENDING'",
+        server_default=text("'PENDING'"),
     )
     assigned_worker: Mapped[int] = mapped_column(Integer, nullable=True)
     comments: Mapped[str] = mapped_column(Text, nullable=True)
