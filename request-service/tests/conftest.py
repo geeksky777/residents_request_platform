@@ -6,7 +6,7 @@ from app.main import app
 from httpx import AsyncClient
 
 
-@pytest_asyncio.fixture(scope="session")
+@pytest_asyncio.fixture(scope="session")   #Попробовать без asyncio!!!!!!!
 def pg_container():
     with PostgresContainer("postgres:16-alpine") as pg:
         yield pg
