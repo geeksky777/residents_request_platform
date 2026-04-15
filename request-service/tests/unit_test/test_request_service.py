@@ -4,7 +4,7 @@ from fastapi import HTTPException
 import pytest
 from datetime import datetime
 
-from app.service import create_request_service,get_requests_by_resident_id, get_requests_by_resident_id_service
+from app.service import create_request_service, get_request_by_id_service,get_requests_by_resident_id, get_requests_by_resident_id_service
 from app.models import Request
 from app.database import StatusEnum
 from app.schemas import RequestCreate
@@ -83,4 +83,33 @@ async def test_get_requests_by_resident_id_service_not_found(mocker):
     with pytest.raises(HTTPException) as exc_info:
         await get_requests_by_resident_id_service(fake_schema.resident_id, mock_db)
         
+    assert exc_info.value.status_code == 404
+
+
+
+
+
+@pytest.mark.asyncio
+async def test_get_request_by_id_service(mocker):
+
+    mock_get = mocker.patch("app.service.get_request_by_id", return_value=fake_request)
+    mock_db = AsyncMock()
+    request_id = uuid4()
+    result = await get_request_by_id_service(request_id, mock_db)
+    mock_get.assert_called_once_with(request_id, mock_db)
+    assert result == fake_request
+
+
+
+
+@pytest.mark.asyncio
+async def test_get_request_by_id_service_with_none(mocker):
+
+    mock_get = mocker.patch("app.service.get_request_by_id", return_value=None)
+    mock_db = AsyncMock()
+    request_id = uuid4()
+    with pytest.raises(HTTPException) as exc_info:
+        await get_request_by_id_service(request_id, mock_db)
+
+    mock_get.assert_called_once_with(request_id, mock_db)
     assert exc_info.value.status_code == 404
